@@ -36,7 +36,8 @@ module LogStash
 
           if(orderingKey != nil) 
             # builder.setOrderingKey(orderingKey)
-            builder.setField("orderingKey", orderingKey)
+            # builder.setField("orderingKey", orderingKey)
+            puts "blablabla"
           end
 
           builder.build
