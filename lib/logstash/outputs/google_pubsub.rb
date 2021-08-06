@@ -33,6 +33,9 @@ class LogStash::Outputs::GooglePubsub < LogStash::Outputs::Base
   # Attributes to add to the message in key: value formats.
   config :attributes, validate: :hash, default: {}
 
+  # orderingKey
+  # config :orderingKey, validate: :string, default: ""
+
   # By default, we serialize messages with JSON.
   default :codec, 'json'
 
@@ -54,7 +57,7 @@ class LogStash::Outputs::GooglePubsub < LogStash::Outputs::Base
 
     # Test that the attributes don't cause errors when they're set.
     begin
-      @pubsub.build_message('', @attributes)
+      @pubsub.build_message('', @attributes, nil)
     rescue TypeError => e
       message = 'Make sure the attributes are string:string pairs'
       @logger.error(message, error: e, attributes: @attributes)
@@ -66,7 +69,10 @@ class LogStash::Outputs::GooglePubsub < LogStash::Outputs::Base
     events_and_encoded.each do |event, encoded|
       @logger.debug("Sending message #{encoded}")
 
-      @pubsub.publish_message(encoded, @attributes)
+      orderingKey = event.dig("kubernetes", "labels", "headless.wpengine.com/envID")
+      @attributes["envId"] = orderingKey
+
+      @pubsub.publish_message(encoded, @attributes, orderingKey)
     end
   end
 

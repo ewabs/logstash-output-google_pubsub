@@ -25,7 +25,7 @@ module LogStash
 
         # Creates a Java PubsubMessage given the message body as a string and a
         # string:string hash of attributes
-        def build_message(message_string, attributes)
+        def build_message(message_string, attributes, orderingKey)
           attributes ||= {}
 
           data = com.google.protobuf.ByteString.copyFromUtf8(message_string)
@@ -34,13 +34,17 @@ module LogStash
 
           attributes.each { |k, v| builder.putAttributes(k, v) }
 
+          if(orderingKey != nil) 
+            builder.setOrderingKey(orderingKey)
+          end
+
           builder.build
         end
 
         # Creates a PubsubMessage from the string and attributes
         # then queues it up to be sent.
-        def publish_message(message_string, attributes)
-          message = build_message(message_string, attributes)
+        def publish_message(message_string, attributes, orderingKey)
+          message = build_message(message_string, attributes, orderingKey)
           messageIdFuture = @pubsub.publish(message)
           setup_callback(message_string, messageIdFuture)
         end
