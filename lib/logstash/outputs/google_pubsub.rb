@@ -69,7 +69,7 @@ class LogStash::Outputs::GooglePubsub < LogStash::Outputs::Base
     events_and_encoded.each do |event, encoded|
       @logger.debug("Sending message #{encoded}")
 
-      orderingKey = event.dig("kubernetes", "labels", "headless.wpengine.com/envID")
+      orderingKey = event["kubernetes"]["labels"]["headless.wpengine.com/envID"] rescue "BoooOrderedKeyNotFound"
       @attributes["envId"] = orderingKey
 
       @pubsub.publish_message(encoded, @attributes, orderingKey)
