@@ -35,7 +35,8 @@ module LogStash
           attributes.each { |k, v| builder.putAttributes(k, v) }
 
           if(orderingKey != nil) 
-            builder.setOrderingKey(orderingKey)
+            # builder.setOrderingKey(orderingKey)
+            builder.setField("orderingKey", orderingKey)
           end
 
           builder.build
