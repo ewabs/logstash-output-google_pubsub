@@ -72,12 +72,7 @@ class LogStash::Outputs::GooglePubsub < LogStash::Outputs::Base
       puts "event foo #{event}"
       puts "event foo class #{event.class}"
 
-      e = JSON.parse(event)
-
-      puts "e bar #{e}"
-      puts "e bar class #{e.class}"
-
-      orderingKey = e["kubernetes"]["labels"]["headless.wpengine.com/envID"] rescue "BoooOrderedKeyNotFound"
+      orderingKey = event.to_hash()["kubernetes"]["labels"]["headless.wpengine.com/envID"] rescue "BoooOrderedKeyNotFound"
       @attributes["envId"] = orderingKey
 
       @pubsub.publish_message(encoded, @attributes, orderingKey)
