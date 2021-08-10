@@ -71,6 +71,7 @@ module LogStash
              .setCredentialsProvider(credentials)
              .setHeaderProvider(construct_headers)
              .setBatchingSettings(batch_settings)
+             .setEnableMessageOrdering(true) 
              .build
         end
 
